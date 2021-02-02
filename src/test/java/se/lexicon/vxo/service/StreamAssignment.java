@@ -1,5 +1,6 @@
 package se.lexicon.vxo.service;
 
+
 import org.junit.jupiter.api.Test;
 import se.lexicon.vxo.model.Gender;
 import se.lexicon.vxo.model.Person;
@@ -7,7 +8,10 @@ import se.lexicon.vxo.model.PersonDto;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.chrono.ChronoLocalDate;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
@@ -30,9 +34,7 @@ public class StreamAssignment {
     @Test
     public void task1(){
         List<Integer> integers = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
-
-        //Write code here
-
+        integers.stream().forEach(System.out::println);
     }
 
     /**
@@ -42,6 +44,7 @@ public class StreamAssignment {
     public void task2(){
         long amount = 0;
 
+        amount = people.stream().count();
         //Write code here
 
         assertEquals(10000, amount);
@@ -55,6 +58,9 @@ public class StreamAssignment {
         long amount = 0;
         int expected = 90;
 
+        amount = people.stream()
+                .filter(person -> person.getLastName().contains("Andersson"))
+                .count();
         //Write code here
 
         assertEquals(expected, amount);
@@ -68,8 +74,9 @@ public class StreamAssignment {
         int expectedSize = 4988;
         List<Person> females = null;
 
-        //Write code here
-
+        females =  people.stream()
+                .filter(person -> person.getGender() == Gender.FEMALE)
+                .collect(Collectors.toList());
 
         assertNotNull(females);
         assertEquals(expectedSize, females.size());
@@ -83,7 +90,10 @@ public class StreamAssignment {
         int expectedSize = 8882;
         Set<LocalDate> dates = null;
 
-        //Write code here
+        Function<Person, LocalDate> dateOfBirthFunction = person -> person.getDateOfBirth();
+        dates = people.stream()
+                .map(dateOfBirthFunction)
+                .collect(Collectors.toCollection(TreeSet::new));
 
         assertNotNull(dates);
         assertTrue(dates instanceof TreeSet);
@@ -99,10 +109,13 @@ public class StreamAssignment {
 
         Person[] result = null;
 
-        //Write code here
+        result =people.stream()
+                .filter(person -> person.getFirstName().equals("Erik"))
+                .toArray(Person[]::new);
 
         assertNotNull(result);
         assertEquals(expectedLength, result.length);
+
     }
 
     /**
@@ -114,7 +127,9 @@ public class StreamAssignment {
 
         Optional<Person> optional = null;
 
-        //Write code here
+        optional = people.stream()
+                .filter(person -> person.getPersonId() == expected.getPersonId())
+                .findFirst();
 
         assertNotNull(optional);
         assertTrue(optional.isPresent());
@@ -122,7 +137,7 @@ public class StreamAssignment {
     }
 
     /**
-     * Using min() define a comparator that extracts the oldest person i the list as an Optional
+     * Using min() define a comparator that extracts the oldest person in the list as an Optional
      */
     @Test
     public void task8(){
@@ -130,8 +145,9 @@ public class StreamAssignment {
 
         Optional<Person> optional = null;
 
-        //Write code here
-
+        optional=  people.stream()
+                    .min(Comparator.comparing(Person::getDateOfBirth));
+                    //.min((p1, p2) -> p1.getDateOfBirth().compareTo(p2.getDateOfBirth()));
         assertNotNull(optional);
         assertEquals(expectedBirthDate, optional.get().getDateOfBirth());
     }
@@ -146,10 +162,19 @@ public class StreamAssignment {
 
         List<PersonDto> dtoList = null;
 
-        //Write code here
+        Function<Person, Integer> personIdFunction = person -> person.getPersonId();
+        Function<Person, String> personFullNameFunction = person -> person.getFirstName() + " " + person.getLastName();
+        Function<Person, PersonDto> personDtoFunction= person -> (PersonDto) personFullNameFunction;
+        List<Integer> personList = null;
+        dtoList = people.stream()
+                .filter(person -> person.getDateOfBirth().isBefore(date))
+                .map(personDtoFunction)
+                .collect(Collectors.toList());
+
 
         assertNotNull(dtoList);
         assertEquals(expectedSize, dtoList.size());
+        assertEquals(expectedSize, personList.size());
     }
 
     /**
