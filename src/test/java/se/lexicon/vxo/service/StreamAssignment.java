@@ -162,19 +162,32 @@ public class StreamAssignment {
 
         List<PersonDto> dtoList = null;
 
-        Function<Person, Integer> personIdFunction = person -> person.getPersonId();
-        Function<Person, String> personFullNameFunction = person -> person.getFirstName() + " " + person.getLastName();
-        Function<Person, PersonDto> personDtoFunction= person -> (PersonDto) personFullNameFunction;
+
+        Function<Person, PersonDto> personIdAndFullNameFunction = person -> {
+            PersonDto aPersonDto = new PersonDto(
+                    person.getPersonId(),
+                    person.getFirstName() + " " + person.getLastName());
+            return aPersonDto;
+        };
+
+        /*Function<Person, PersonDto> personIdAndFullNameFunction = new Function<Person, PersonDto>() {
+            @Override
+            public PersonDto apply(Person person) {
+                PersonDto aPersonDto = new PersonDto(
+                    person.getPersonId(),
+                        person.getFirstName() + " " + person.getLastName());
+                return aPersonDto;
+            }
+        };*/
+
         List<Integer> personList = null;
         dtoList = people.stream()
                 .filter(person -> person.getDateOfBirth().isBefore(date))
-                .map(personDtoFunction)
+                .map(personIdAndFullNameFunction)
                 .collect(Collectors.toList());
-
 
         assertNotNull(dtoList);
         assertEquals(expectedSize, dtoList.size());
-        assertEquals(expectedSize, personList.size());
     }
 
     /**
