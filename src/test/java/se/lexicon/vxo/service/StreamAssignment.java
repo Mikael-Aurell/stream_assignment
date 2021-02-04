@@ -10,10 +10,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.chrono.ChronoLocalDate;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -243,14 +240,27 @@ public class StreamAssignment {
 
         String[] result = null;
 
-        //Write code here
+        Predicate<Person> personFirstNameIsPalindrome = person -> new StringBuilder(person.getFirstName())
+                .reverse().toString().equalsIgnoreCase(person.getFirstName());
+
+        Function<Person, String> personStringFunction = person -> person.getFirstName();
+
+        Comparator<String> sortPerson = (s1, s2) -> s1.compareToIgnoreCase(s2);
+
+        result = people.stream()
+                .filter(personFirstNameIsPalindrome)
+                .map(personStringFunction)
+                .sorted(sortPerson)
+                .distinct()
+                .toArray(String[]::new);
 
         assertNotNull(result);
         assertArrayEquals(expected, result);
     }
 
     /**
-     * Extract from people a map where each key is a last name with a value containing a list of all that has that lastName
+     * Extract from people a map where each key is a last name with a value containing
+     * a list of all that has that lastName
      */
     @Test
     public void task13(){
