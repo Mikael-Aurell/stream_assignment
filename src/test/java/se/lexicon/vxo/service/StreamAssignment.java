@@ -12,6 +12,7 @@ import java.time.chrono.ChronoLocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
@@ -162,15 +163,14 @@ public class StreamAssignment {
 
         List<PersonDto> dtoList = null;
 
-
-        Function<Person, PersonDto> personIdAndFullNameFunction = person -> {
+        /*Function<Person, PersonDto> personIdAndFullNameFunction = person -> {
             PersonDto aPersonDto = new PersonDto(
                     person.getPersonId(),
                     person.getFirstName() + " " + person.getLastName());
             return aPersonDto;
-        };
+        };*/
 
-        /*Function<Person, PersonDto> personIdAndFullNameFunction = new Function<Person, PersonDto>() {
+        Function<Person, PersonDto> personIdAndFullNameFunction = new Function<Person, PersonDto>() {
             @Override
             public PersonDto apply(Person person) {
                 PersonDto aPersonDto = new PersonDto(
@@ -178,9 +178,8 @@ public class StreamAssignment {
                         person.getFirstName() + " " + person.getLastName());
                 return aPersonDto;
             }
-        };*/
+        };
 
-        List<Integer> personList = null;
         dtoList = people.stream()
                 .filter(person -> person.getDateOfBirth().isBefore(date))
                 .map(personIdAndFullNameFunction)
@@ -191,17 +190,25 @@ public class StreamAssignment {
     }
 
     /**
-     * In a Stream Filter out one person with id 5914 from people and take the birthdate and build a string from data that the date contains then
-     * return the string.
+     * In a Stream Filter out one person with id 5914 from people and take the birthdate and
+     * build a string from data that the date contains then return the string.
      */
+
     @Test
     public void task10(){
         String expected = "WEDNESDAY 19 DECEMBER 2012";
         int personId = 5914;
 
         Optional<String> optional = null;
-
-        //Write code here
+        Predicate<Person> getId5914 = person -> person.getPersonId() == personId;
+        Function<Person, String> personToString = person -> person.getDateOfBirth().getDayOfWeek()
+                + " " + person.getDateOfBirth().getDayOfMonth()
+                +" " + person.getDateOfBirth().getMonth()
+                +" "+ person.getDateOfBirth().getYear();
+        optional = people.stream()
+                .filter(getId5914)
+                .map(personToString)
+                .findFirst();
 
         assertNotNull(optional);
         assertTrue(optional.isPresent());
