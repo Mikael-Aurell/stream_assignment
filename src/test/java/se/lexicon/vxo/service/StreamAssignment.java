@@ -203,8 +203,8 @@ public class StreamAssignment {
         Predicate<Person> getId5914 = person -> person.getPersonId() == personId;
         Function<Person, String> personToString = person -> person.getDateOfBirth().getDayOfWeek()
                 + " " + person.getDateOfBirth().getDayOfMonth()
-                +" " + person.getDateOfBirth().getMonth()
-                +" "+ person.getDateOfBirth().getYear();
+                + " " + person.getDateOfBirth().getMonth()
+                + " "+ person.getDateOfBirth().getYear();
         optional = people.stream()
                 .filter(getId5914)
                 .map(personToString)
@@ -216,8 +216,8 @@ public class StreamAssignment {
     }
 
     /**
-     * Get average age of all People by turning people into a stream and use defined ToIntFunction personToAge
-     * changing type of stream to an IntStream.
+     * Get average age of all People by turning people into a stream and use defined
+     * ToIntFunction personToAge changing type of stream to an IntStream.
      */
     @Test
     public void task11(){
@@ -226,7 +226,9 @@ public class StreamAssignment {
         double expected = 54.42;
         double averageAge = 0;
 
-        //Write code here
+        averageAge = people.stream()
+                .mapToInt(personToAge)
+                .reduce(0,(i1, i2) -> i1+i2 )/10000d;
 
         assertTrue(averageAge > 0);
         assertEquals(expected, averageAge, .01);
