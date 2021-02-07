@@ -9,9 +9,11 @@ import se.lexicon.vxo.model.PersonDto;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.chrono.ChronoLocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -267,7 +269,10 @@ public class StreamAssignment {
         int expectedSize = 107;
         Map<String, List<Person>> personMap = null;
 
-        //Write code here
+        Function<Person, String> groupingByGetLastName = person -> person.getLastName();
+
+        personMap = people.stream()
+                .collect(Collectors.groupingBy(groupingByGetLastName));
 
         assertNotNull(personMap);
         assertEquals(expectedSize, personMap.size());
@@ -280,8 +285,12 @@ public class StreamAssignment {
     public void task14(){
         LocalDate[] _2020_dates = null;
 
-        //Write code here
+        LocalDate start = LocalDate.parse("2020-01-01");
+        LocalDate end = LocalDate.parse("2021-01-01");
 
+        _2020_dates = Stream.iterate(start, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(start, end))
+                .toArray(LocalDate[]::new);
 
         assertNotNull(_2020_dates);
         assertEquals(366, _2020_dates.length);
